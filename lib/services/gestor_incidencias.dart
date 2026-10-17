@@ -18,7 +18,7 @@ class GestorIncidencias {
   List<Incidencia> buscar(String texto) {
     if (texto.trim().isEmpty) return incidencias;
     
-    return incidencias.where((x) => removeDiacritics(x.titulo.toLowerCase().trim()).contains(removeDiacritics(texto.trim().toLowerCase()))||removeDiacritics(x.descripcion.toLowerCase().trim()).contains(removeDiacritics(texto.trim().toLowerCase()))).toList();
+    return incidencias.where((x) =>removeDiacritics(x.titulo.toLowerCase().trim()).contains(removeDiacritics(texto.trim().toLowerCase()))||removeDiacritics(x.descripcion.toLowerCase().trim()).contains(removeDiacritics(texto.trim().toLowerCase()))).toList();
   }
 
   Incidencia? porId(String id) {
@@ -28,8 +28,8 @@ class GestorIncidencias {
     return null;
   }
 
-  int contar(String estado) {
-    if (estado == 'Pendiente') return cantidadPendientes;
+  int contar(String estado) {//QUE HACES AQUI????
+    //if (estado == 'Pendiente') return cantidadPendientes;
     return incidencias.where((x) => x.estado == estado).length;
   }
 
