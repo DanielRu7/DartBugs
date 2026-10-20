@@ -52,9 +52,21 @@ class GestorIncidencias {
     await archivo.writeAsString(jsonEncode(datos),);//escribe todo de nuezen el json
     */
   }
+  Future<void> cambiarPrioridad(String id, String prioridad) async {
+    
+    for(var i=0; i<incidencias.length; i++){
+      if(incidencias[i].id==id){
+        incidencias[i].prioridad=prioridad;
+        break;
+      }
+    }
+    await datos.guardar(incidencias);
+   
+   
+  }
 
   Future<void> crear(String titulo, String descripcion, String cliente,
-      String categoria) async {
+      String categoria, String prioridad) async {
     final nuevo = Incidencia(
       id: 'INC-${DateTime.now().microsecondsSinceEpoch}',
       titulo: titulo,
@@ -63,6 +75,7 @@ class GestorIncidencias {
       categoria: categoria,
       estado: 'Pendiente',
       fecha: DateTime.now().toIso8601String().split('T').first,
+      prioridad: prioridad//------------------------------------
     );
     incidencias.insert(0, nuevo);
     cantidadPendientes++;
