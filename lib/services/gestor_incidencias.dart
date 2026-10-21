@@ -17,9 +17,26 @@ class GestorIncidencias {
 
   List<Incidencia> buscar(String texto) {
     if (texto.trim().isEmpty) return incidencias;
-    
-    return incidencias.where((x) =>removeDiacritics(x.titulo.toLowerCase().trim()).contains(removeDiacritics(texto.trim().toLowerCase()))||removeDiacritics(x.descripcion.toLowerCase().trim()).contains(removeDiacritics(texto.trim().toLowerCase()))).toList();
+
+    return incidencias
+        .where((x) =>
+            removeDiacritics(x.titulo.toLowerCase().trim())
+                .contains(removeDiacritics(texto.trim().toLowerCase())) ||
+            removeDiacritics(x.descripcion.toLowerCase().trim())
+                .contains(removeDiacritics(texto.trim().toLowerCase())))
+        .toList();
   }
+
+      List<Incidencia> filtoEstado(String estado,String prioridad, List<Incidencia> lista) {
+        if (estado == 'Todos' && prioridad=='Todas') return lista;
+        if(estado=='Todos'){
+          return lista.where((x) => x.prioridad==prioridad).toList();
+        }
+        if(prioridad=='Todas'){
+          return lista.where((x) => x.estado==estado).toList();
+        }
+        return lista.where((x) => x.estado == estado && x.prioridad==prioridad).toList();
+      }
 
   Incidencia? porId(String id) {
     for (var x in incidencias) {
@@ -28,7 +45,8 @@ class GestorIncidencias {
     return null;
   }
 
-  int contar(String estado) {//QUE HACES AQUI????
+  int contar(String estado) {
+    //QUE HACES AQUI????
     //if (estado == 'Pendiente') return cantidadPendientes;
     return incidencias.where((x) => x.estado == estado).length;
   }
@@ -36,10 +54,9 @@ class GestorIncidencias {
 //guarda el estado pero por que no persiste??
 //el estado no persiste por que los datos vinen de un json mientras este json no se actualice la peristencia es imposible
   Future<void> cambiarEstado(String id, String estado) async {
-    
-    for(var i=0; i<incidencias.length; i++){
-      if(incidencias[i].id==id){
-        incidencias[i].estado=estado;
+    for (var i = 0; i < incidencias.length; i++) {
+      if (incidencias[i].id == id) {
+        incidencias[i].estado = estado;
         break;
       }
     }
@@ -52,31 +69,29 @@ class GestorIncidencias {
     await archivo.writeAsString(jsonEncode(datos),);//escribe todo de nuezen el json
     */
   }
+
   Future<void> cambiarPrioridad(String id, String prioridad) async {
-    
-    for(var i=0; i<incidencias.length; i++){
-      if(incidencias[i].id==id){
-        incidencias[i].prioridad=prioridad;
+    for (var i = 0; i < incidencias.length; i++) {
+      if (incidencias[i].id == id) {
+        incidencias[i].prioridad = prioridad;
         break;
       }
     }
     await datos.guardar(incidencias);
-   
-   
   }
 
   Future<void> crear(String titulo, String descripcion, String cliente,
       String categoria, String prioridad) async {
     final nuevo = Incidencia(
-      id: 'INC-${DateTime.now().microsecondsSinceEpoch}',
-      titulo: titulo,
-      descripcion: descripcion,
-      cliente: cliente,
-      categoria: categoria,
-      estado: 'Pendiente',
-      fecha: DateTime.now().toIso8601String().split('T').first,
-      prioridad: prioridad//------------------------------------
-    );
+        id: 'INC-${DateTime.now().microsecondsSinceEpoch}',
+        titulo: titulo,
+        descripcion: descripcion,
+        cliente: cliente,
+        categoria: categoria,
+        estado: 'Pendiente',
+        fecha: DateTime.now().toIso8601String().split('T').first,
+        prioridad: prioridad //------------------------------------
+        );
     incidencias.insert(0, nuevo);
     cantidadPendientes++;
     await datos.guardar(incidencias);

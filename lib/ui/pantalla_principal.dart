@@ -16,6 +16,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
   bool cargando = true;
   String? error;
   String busqueda = '';
+  String opcionEstado = 'Todos';
+  String opcionPrioridad = 'Todas';
 
   @override
   void initState() {
@@ -98,7 +100,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
   @override
   Widget build(BuildContext context) {
-    final items = g.buscar(busqueda);
+    final items =
+        g.filtoEstado(opcionEstado, opcionPrioridad, g.buscar(busqueda));
     return Scaffold(
       appBar: AppBar(
         title: const Text('NexaSoft | Incidencias'),
@@ -163,7 +166,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(12, 14, 12, 8),
+                          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
                           child: Row(children: [
                             resumen('Pendientes', '${g.contar('Pendiente')}',
                                 Icons.pending_actions),
@@ -174,17 +177,68 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                           ]),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 17, vertical: 5),
-                          child: TextField(
-                            decoration: const InputDecoration(
-                              labelText: 'Buscar incidencias',
-                              hintText: 'Ejemplo: WiFi, correo, pantalla',
-                              prefixIcon: Icon(Icons.search),
-                              border: OutlineInputBorder(),
+                            padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 5),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    decoration: const InputDecoration(
+                                      labelText: 'Buscar incidencias',
+                                      hintText: 'Ejemplo: WiFi, correo, pantalla',
+                                      prefixIcon: Icon(Icons.search),
+                                      border: OutlineInputBorder(),
+                                    ),
+                                    onChanged: (texto) => setState(() => busqueda = texto),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () => setState(() {
+                                    busqueda = '';
+                                    opcionEstado = 'Todos';
+                                    opcionPrioridad = 'Todas';
+                                  }),
+                                  child: const Text('Limpiar'),
+                                ),
+                              ],
                             ),
-                            onChanged: (texto) =>
-                                setState(() => busqueda = texto),
+                          ),
+
+                       
+                        
+                        RadioGroup<String>(
+                          groupValue: opcionEstado,
+                          onChanged: (v) => setState(() => opcionEstado = v!),
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            children:
+                                ['Todos', 'Pendiente', 'En proceso', 'Resuelta']
+                                    .map((o) => Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Radio<String>(value: o),
+                                            Text(o),
+                                            const SizedBox(width: 8),
+                                          ],
+                                        ))
+                                    .toList(),
+                          ),
+                        ),
+                        RadioGroup<String>(
+                          groupValue: opcionPrioridad,
+                          onChanged: (v) => setState(() => opcionPrioridad = v!),
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            children:
+                                ['Todas', 'Baja', 'Media', 'Alta']
+                                    .map((o) => Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Radio<String>(value: o),
+                                            Text(o),
+                                            const SizedBox(width: 8),
+                                          ],
+                                        ))
+                                    .toList(),
                           ),
                         ),
                         Padding(
@@ -235,18 +289,17 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                                               ),
                                               const SizedBox(width: 12),
                                               Padding(
-                                                padding:  EdgeInsets.symmetric(vertical: 5),
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 5),
                                                 child: Text(
-                                                'Prioridad: ${item.prioridad}',
-                                                style: TextStyle(
-                                                  color: colorPrioridad(
-                                                      item.prioridad),
-                                                  fontWeight: FontWeight.bold,
+                                                  'Prioridad: ${item.prioridad}',
+                                                  style: TextStyle(
+                                                    color: colorPrioridad(
+                                                        item.prioridad),
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
                                               ),
-                                                ),
-
-                                              
                                             ],
                                           ),
                                         ),
