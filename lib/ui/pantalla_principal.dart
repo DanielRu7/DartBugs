@@ -18,6 +18,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
   String busqueda = '';
   String opcionEstado = 'Todos';
   String opcionPrioridad = 'Todas';
+  final TextEditingController controlador = TextEditingController();
 
   @override
   void initState() {
@@ -166,7 +167,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 2, horizontal: 5),
                           child: Row(children: [
                             resumen('Pendientes', '${g.contar('Pendiente')}',
                                 Icons.pending_actions),
@@ -177,34 +179,35 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                           ]),
                         ),
                         Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 5),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: TextField(
-                                    decoration: const InputDecoration(
-                                      labelText: 'Buscar incidencias',
-                                      hintText: 'Ejemplo: WiFi, correo, pantalla',
-                                      prefixIcon: Icon(Icons.search),
-                                      border: OutlineInputBorder(),
-                                    ),
-                                    onChanged: (texto) => setState(() => busqueda = texto),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 17, vertical: 5),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: controlador,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Buscar incidencias',
+                                    hintText: 'Ejemplo: WiFi, correo, pantalla',
+                                    prefixIcon: Icon(Icons.search),
+                                    border: OutlineInputBorder(),
                                   ),
+                                  onChanged: (texto) =>
+                                      setState(() => busqueda = texto),
                                 ),
-                                TextButton(
-                                  onPressed: () => setState(() {
-                                    busqueda = '';
-                                    opcionEstado = 'Todos';
-                                    opcionPrioridad = 'Todas';
-                                  }),
-                                  child: const Text('Limpiar'),
-                                ),
-                              ],
-                            ),
+                              ),
+                              TextButton(
+                                onPressed: () => setState(() {
+                                  controlador.clear();
+                                  busqueda = '';
+                                  opcionEstado = 'Todos';
+                                  opcionPrioridad = 'Todas';
+                                }),
+                                child: const Text('Limpiar'),
+                              ),
+                            ],
                           ),
-
-                       
-                        
+                        ),
                         RadioGroup<String>(
                           groupValue: opcionEstado,
                           onChanged: (v) => setState(() => opcionEstado = v!),
@@ -225,20 +228,20 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         ),
                         RadioGroup<String>(
                           groupValue: opcionPrioridad,
-                          onChanged: (v) => setState(() => opcionPrioridad = v!),
+                          onChanged: (v) =>
+                              setState(() => opcionPrioridad = v!),
                           child: Wrap(
                             alignment: WrapAlignment.center,
-                            children:
-                                ['Todas', 'Baja', 'Media', 'Alta']
-                                    .map((o) => Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Radio<String>(value: o),
-                                            Text(o),
-                                            const SizedBox(width: 8),
-                                          ],
-                                        ))
-                                    .toList(),
+                            children: ['Todas', 'Baja', 'Media', 'Alta']
+                                .map((o) => Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Radio<String>(value: o),
+                                        Text(o),
+                                        const SizedBox(width: 8),
+                                      ],
+                                    ))
+                                .toList(),
                           ),
                         ),
                         Padding(
